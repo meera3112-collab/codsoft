@@ -1,0 +1,25 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+titanic_df = pd.read_csv("Titanic_Dataset.csv")
+
+titanic_df['Age'].fillna(titanic_df['Age'].median(), inplace=True)
+titanic_df['Embarked'].fillna(titanic_df['Embarked'].mode()[0], inplace=True)
+
+titanic_df['Sex'] = titanic_df['Sex'].map({'male': 0, 'female': 1})
+titanic_df['Embarked'] = titanic_df['Embarked'].map({'S': 0, 'C': 1, 'Q': 2})
+
+features = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
+X = titanic_df[features]
+y = titanic_df['Survived']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = RandomForestClassifier()  # Creating a Random Forest Classifier
+model.fit(X_train, y_train)  # Training the model on the training data
+
+y_pred = model.predict(X_test)  # Making predictions on the test data
+accuracy = accuracy_score(y_test, y_pred)  # Calculating the accuracy of the model
+print("Accuracy:", accuracy)  # Printing the accuracy of the model
